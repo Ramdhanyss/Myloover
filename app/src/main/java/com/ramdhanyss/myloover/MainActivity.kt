@@ -12,7 +12,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,32 +64,71 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun MylooverApp() {
 
-        var videoUri by remember { mutableStateOf<Uri?>(null) }
-        var audioUri by remember { mutableStateOf<Uri?>(null) }
+        var videoUri by remember {
+            mutableStateOf<Uri?>(null)
+        }
 
-        var videoDuration by remember { mutableStateOf<Long?>(null) }
-        var audioDuration by remember { mutableStateOf<Long?>(null) }
+        var audioUri by remember {
+            mutableStateOf<Uri?>(null)
+        }
 
-        var isExporting by remember { mutableStateOf(false) }
-        var exportFinished by remember { mutableStateOf(false) }
+        var videoDuration by remember {
+            mutableStateOf<Long?>(null)
+        }
 
+        var audioDuration by remember {
+            mutableStateOf<Long?>(null)
+        }
+
+        var isExporting by remember {
+            mutableStateOf(false)
+        }
+
+        var exportFinished by remember {
+            mutableStateOf(false)
+        }
+
+        /*
+         * VIDEO PICKER
+         */
         val videoPicker =
             rememberLauncherForActivityResult(
                 ActivityResultContracts.OpenDocument()
             ) { uri ->
+
                 if (uri != null) {
+
                     videoUri = uri
-                    videoDuration = getDuration(this@MainActivity, uri)
+
+                    videoDuration =
+                        getDuration(
+                            this@MainActivity,
+                            uri
+                        )
+
+                    exportFinished = false
                 }
             }
 
+        /*
+         * AUDIO PICKER
+         */
         val audioPicker =
             rememberLauncherForActivityResult(
                 ActivityResultContracts.OpenDocument()
             ) { uri ->
+
                 if (uri != null) {
+
                     audioUri = uri
-                    audioDuration = getDuration(this@MainActivity, uri)
+
+                    audioDuration =
+                        getDuration(
+                            this@MainActivity,
+                            uri
+                        )
+
+                    exportFinished = false
                 }
             }
 
@@ -100,23 +139,34 @@ class MainActivity : ComponentActivity() {
             verticalArrangement = Arrangement.Top
         ) {
 
+            /*
+             * TITLE
+             */
             Text(
                 text = "Myloover",
                 style = MaterialTheme.typography.headlineMedium
             )
 
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(
+                modifier = Modifier.height(6.dp)
+            )
 
             Text(
                 text = "Video Music Looper",
                 style = MaterialTheme.typography.bodyLarge
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(
+                modifier = Modifier.height(24.dp)
+            )
 
+            /*
+             * VIDEO CARD
+             */
             Card(
                 modifier = Modifier.fillMaxWidth()
             ) {
+
                 Column(
                     modifier = Modifier.padding(16.dp)
                 ) {
@@ -126,10 +176,13 @@ class MainActivity : ComponentActivity() {
                         style = MaterialTheme.typography.titleMedium
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(
+                        modifier = Modifier.height(8.dp)
+                    )
 
                     OutlinedButton(
                         onClick = {
+
                             videoPicker.launch(
                                 arrayOf(
                                     "video/mp4",
@@ -139,26 +192,38 @@ class MainActivity : ComponentActivity() {
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Pilih Video")
+
+                        Text(
+                            text = "Pilih Video"
+                        )
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(
+                        modifier = Modifier.height(8.dp)
+                    )
 
                     Text(
-                        text = if (videoUri != null) {
-                            "Video: ${formatDuration(videoDuration)}"
-                        } else {
-                            "Belum ada video"
-                        }
+                        text =
+                            if (videoUri != null) {
+                                "Video: ${formatDuration(videoDuration)}"
+                            } else {
+                                "Belum ada video"
+                            }
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(
+                modifier = Modifier.height(16.dp)
+            )
 
+            /*
+             * MUSIC CARD
+             */
             Card(
                 modifier = Modifier.fillMaxWidth()
             ) {
+
                 Column(
                     modifier = Modifier.padding(16.dp)
                 ) {
@@ -168,10 +233,13 @@ class MainActivity : ComponentActivity() {
                         style = MaterialTheme.typography.titleMedium
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(
+                        modifier = Modifier.height(8.dp)
+                    )
 
                     OutlinedButton(
                         onClick = {
+
                             audioPicker.launch(
                                 arrayOf(
                                     "audio/*"
@@ -180,47 +248,77 @@ class MainActivity : ComponentActivity() {
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Pilih Musik")
+
+                        Text(
+                            text = "Pilih Musik"
+                        )
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(
+                        modifier = Modifier.height(8.dp)
+                    )
 
                     Text(
-                        text = if (audioUri != null) {
-                            "Musik: ${formatDuration(audioDuration)}"
-                        } else {
-                            "Belum ada musik"
-                        }
+                        text =
+                            if (audioUri != null) {
+                                "Musik: ${formatDuration(audioDuration)}"
+                            } else {
+                                "Belum ada musik"
+                            }
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(
+                modifier = Modifier.height(20.dp)
+            )
 
-            if (videoDuration != null && audioDuration != null) {
+            /*
+             * OUTPUT INFORMATION
+             */
+            if (
+                videoDuration != null &&
+                audioDuration != null
+            ) {
 
                 Text(
-                    text = "Video akan di-loop sampai durasi musik.",
+                    text =
+                        "Video akan di-loop sampai musik selesai.",
                     style = MaterialTheme.typography.bodyMedium
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(
+                    modifier = Modifier.height(4.dp)
+                )
 
                 Text(
-                    text = "Durasi output: ${formatDuration(audioDuration)}",
+                    text =
+                        "Durasi output: ${formatDuration(audioDuration)}",
                     style = MaterialTheme.typography.titleMedium
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(
+                    modifier = Modifier.height(16.dp)
+                )
             }
 
+            /*
+             * EXPORT BUTTON
+             */
             Button(
                 onClick = {
 
-                    val video = videoUri
-                    val audio = audioUri
+                    val selectedVideo =
+                        videoUri
 
-                    if (video == null || audio == null) {
+                    val selectedAudio =
+                        audioUri
+
+                    if (
+                        selectedVideo == null ||
+                        selectedAudio == null
+                    ) {
+
                         Toast.makeText(
                             this@MainActivity,
                             "Pilih video dan musik terlebih dahulu.",
@@ -234,10 +332,13 @@ class MainActivity : ComponentActivity() {
                     exportFinished = false
 
                     exportVideo(
-                        videoUri = video,
-                        audioUri = audio,
+                        videoUri = selectedVideo,
+                        audioUri = selectedAudio,
+
                         onCompleted = {
+
                             runOnUiThread {
+
                                 isExporting = false
                                 exportFinished = true
 
@@ -248,8 +349,11 @@ class MainActivity : ComponentActivity() {
                                 ).show()
                             }
                         },
+
                         onError = { error ->
+
                             runOnUiThread {
+
                                 isExporting = false
 
                                 Toast.makeText(
@@ -261,51 +365,90 @@ class MainActivity : ComponentActivity() {
                         }
                     )
                 },
-                enabled = videoUri != null &&
-                        audioUri != null &&
-                        !isExporting,
+
+                enabled =
+                    videoUri != null &&
+                    audioUri != null &&
+                    !isExporting,
+
                 modifier = Modifier.fillMaxWidth()
             ) {
+
                 Text(
-                    text = if (isExporting) {
-                        "MEMPROSES..."
-                    } else {
-                        "BUAT VIDEO"
-                    }
+                    text =
+                        if (isExporting) {
+                            "MEMPROSES..."
+                        } else {
+                            "BUAT VIDEO"
+                        }
                 )
             }
 
+            /*
+             * EXPORT PROGRESS
+             */
             if (isExporting) {
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(
+                    modifier = Modifier.height(16.dp)
+                )
 
                 LinearProgressIndicator(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(
+                    modifier = Modifier.height(8.dp)
+                )
 
                 Text(
-                    text = "Sedang membuat video. Jangan tutup aplikasi."
+                    text =
+                        "Sedang membuat video. Jangan tutup aplikasi."
                 )
             }
 
+            /*
+             * FINISHED MESSAGE
+             */
             if (exportFinished) {
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(
+                    modifier = Modifier.height(16.dp)
+                )
 
                 Text(
                     text = "✓ Video selesai dibuat.",
                     style = MaterialTheme.typography.titleMedium
                 )
 
+                Spacer(
+                    modifier = Modifier.height(4.dp)
+                )
+
                 Text(
-                    text = "File tersimpan di folder Movies/Myloover."
+                    text =
+                        "File tersimpan di folder Movies/Myloover."
                 )
             }
         }
     }
 
+    /*
+     * EXPORT VIDEO
+     *
+     * VIDEO:
+     * - hanya mengambil gambar/video
+     * - audio asli video dibuang
+     * - video di-loop
+     *
+     * AUDIO:
+     * - mengambil musik
+     * - tidak di-loop
+     *
+     * HASIL:
+     * video akan terus mengulang
+     * sampai musik selesai.
+     */
     @OptIn(UnstableApi::class)
     private fun exportVideo(
         videoUri: Uri,
@@ -316,16 +459,25 @@ class MainActivity : ComponentActivity() {
 
         try {
 
+            /*
+             * OUTPUT DIRECTORY
+             */
             val outputDirectory =
                 File(
-                    getExternalFilesDir(Environment.DIRECTORY_MOVIES),
+                    getExternalFilesDir(
+                        Environment.DIRECTORY_MOVIES
+                    ),
                     "Myloover"
                 )
 
             if (!outputDirectory.exists()) {
+
                 outputDirectory.mkdirs()
             }
 
+            /*
+             * FILE NAME
+             */
             val timestamp =
                 SimpleDateFormat(
                     "yyyyMMdd_HHmmss",
@@ -339,16 +491,24 @@ class MainActivity : ComponentActivity() {
                 )
 
             /*
-             * VIDEO SEQUENCE
+             * VIDEO ITEM
              *
-             * Hanya mengambil video.
-             * Audio asli dari video tidak digunakan.
+             * setRemoveAudio(true)
+             * memastikan audio bawaan video
+             * tidak ikut masuk ke output.
              */
             val videoItem =
                 EditedMediaItem.Builder(
                     MediaItem.fromUri(videoUri)
-                ).build()
+                )
+                    .setRemoveAudio(true)
+                    .build()
 
+            /*
+             * VIDEO SEQUENCE
+             *
+             * Video dibuat looping.
+             */
             val videoSequence =
                 EditedMediaItemSequence
                     .withVideoFrom(
@@ -359,17 +519,23 @@ class MainActivity : ComponentActivity() {
                     .build()
 
             /*
-             * AUDIO SEQUENCE
-             *
-             * Musik tidak di-loop.
-             * Karena sequence video di-loop dan musik tidak,
-             * durasi musik menjadi batas akhir output.
+             * AUDIO ITEM
              */
             val audioItem =
                 EditedMediaItem.Builder(
                     MediaItem.fromUri(audioUri)
-                ).build()
+                )
+                    .build()
 
+            /*
+             * AUDIO SEQUENCE
+             *
+             * Tidak looping.
+             *
+             * Karena audio merupakan sequence
+             * non-looping terpanjang, durasinya
+             * menjadi batas akhir composition.
+             */
             val audioSequence =
                 EditedMediaItemSequence
                     .withAudioFrom(
@@ -378,17 +544,21 @@ class MainActivity : ComponentActivity() {
 
             /*
              * COMPOSITION
-             *
-             * Video dan musik berada pada timeline yang sama.
              */
             val composition =
                 Composition.Builder(
                     videoSequence,
                     audioSequence
-                ).build()
+                )
+                    .build()
 
+            /*
+             * TRANSFORMER
+             */
             val transformer =
-                Transformer.Builder(this)
+                Transformer.Builder(
+                    this@MainActivity
+                )
                     .addListener(
                         object : Transformer.Listener {
 
@@ -396,6 +566,7 @@ class MainActivity : ComponentActivity() {
                                 composition: Composition,
                                 exportResult: ExportResult
                             ) {
+
                                 onCompleted()
                             }
 
@@ -404,12 +575,18 @@ class MainActivity : ComponentActivity() {
                                 exportResult: ExportResult,
                                 exportException: ExportException
                             ) {
-                                onError(exportException)
+
+                                onError(
+                                    exportException
+                                )
                             }
                         }
                     )
                     .build()
 
+            /*
+             * START EXPORT
+             */
             transformer.start(
                 composition,
                 outputFile.absolutePath
@@ -417,6 +594,10 @@ class MainActivity : ComponentActivity() {
 
         } catch (exception: Exception) {
 
+            /*
+             * UBAH EXCEPTION BIASA
+             * MENJADI ExportException
+             */
             onError(
                 ExportException.createForUnexpected(
                     exception
@@ -425,35 +606,46 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /*
+     * GET MEDIA DURATION
+     */
     private fun getDuration(
         context: Context,
         uri: Uri
     ): Long? {
 
-        return try {
+        val retriever =
+            MediaMetadataRetriever()
 
-            val retriever =
-                MediaMetadataRetriever()
+        return try {
 
             retriever.setDataSource(
                 context,
                 uri
             )
 
-            val duration =
-                retriever.extractMetadata(
+            retriever
+                .extractMetadata(
                     MediaMetadataRetriever.METADATA_KEY_DURATION
-                )?.toLongOrNull()
-
-            retriever.release()
-
-            duration
+                )
+                ?.toLongOrNull()
 
         } catch (exception: Exception) {
+
             null
+
+        } finally {
+
+            try {
+                retriever.release()
+            } catch (_: Exception) {
+            }
         }
     }
 
+    /*
+     * FORMAT DURATION
+     */
     private fun formatDuration(
         duration: Long?
     ): String {
@@ -475,6 +667,7 @@ class MainActivity : ComponentActivity() {
             totalSeconds % 60
 
         return if (hours > 0) {
+
             String.format(
                 Locale.US,
                 "%02d:%02d:%02d",
@@ -482,7 +675,9 @@ class MainActivity : ComponentActivity() {
                 minutes,
                 seconds
             )
+
         } else {
+
             String.format(
                 Locale.US,
                 "%02d:%02d",
